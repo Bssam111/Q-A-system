@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register - StackLite</title>
+</head>
+<body>
+
+  <!-- Logo + Title -->
+  <header>
+    <a href="home.html">
+      <img src="logo.png" alt="StackLite Logo" width="100">
+    </a>
+    <h1>StackLite</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Register Form -->
+  <h2>Register</h2>
+
+  <form id="register-form" action="submit_register.php" method="post">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="submit">Create Account</button>
+  </form>
+  <script src="js/main.js"></script>
+  <script src="js/register.js"></script>
+</body>
+</html>

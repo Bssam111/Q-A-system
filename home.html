@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Home - StackLite</title>
+</head>
+<body>
+
+  <!-- Logo + Title -->
+  <header>
+    <a href="home.html">
+      <img src="logo.png" alt="StackLite Logo" width="100">
+    </a>
+    <h1>StackLite</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <!-- For non-logged-in users -->
+      <li id="nav-login"><a href="login.html">Login</a></li>
+      <li id="nav-register"><a href="register.html">Register</a></li>
+  
+      <!-- For logged-in users -->
+      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+  
+
+  <!-- Main Content -->
+  <h2>Recent Questions</h2>
+
+  <div id="question-list">
+    <!-- Questions will be added here dynamically -->
+  </div>
+  <script src="js/main.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

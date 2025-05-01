@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ask a Question - StackLite</title>
+</head>
+<body>
+
+  <!-- Logo -->
+  <header>
+    <a href="home.html">
+      <img src="logo.png" alt="StackLite Logo" width="100">
+    </a>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <!-- For non-logged-in users -->
+      <li id="nav-login"><a href="login.html">Login</a></li>
+      <li id="nav-register"><a href="register.html">Register</a></li>
+  
+      <!-- For logged-in users -->
+      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+  
+
+  <!-- Ask Question Form -->
+  <h1>Ask a New Question</h1>
+
+  <form id="ask-form"  method="post">
+    <label for="title">Question Title:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="content">Details:</label><br>
+    <textarea id="content" name="content" rows="6" cols="50" required></textarea><br><br>
+
+    <button type="submit">Post Question</button>
+  </form>
+  
+  
+
+<!-- هذا الكود حماية فقط -->
+<script src="js/main.js"></script>
+  <script>
+    // التحقق من تسجيل الدخول
+    const user = localStorage.getItem("loggedInUser");
+  
+    if (!user) {
+      alert("You must be logged in to ask a question.");
+      window.location.href = "login.html";
+    }
+  </script> 
+  
+<script src="js/ask.js"></script>
+
+</body>
+</html>

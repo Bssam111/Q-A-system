@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - StackLite</title>
+</head>
+<body>
+
+  <!-- Logo + Title -->
+  <header>
+    <a href="home.html">
+      <img src="logo.png" alt="StackLite Logo" width="100">
+    </a>
+    <h1>StackLite</h1>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <ul>
+      <li><a href="home.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="register.html">Register</a></li>
+      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Login Form -->
+  <h2>Login</h2>
+
+  <form id=login-form action="submit_login.php" method="post">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
+
+    <button type="submit">Login</button>
+  </form>
+  <script src="js/main.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>Question - StackLite</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Header & Logo -->
+  <!-- Logo + Title -->
   <header>
     <a href="home.html">
-      <img src="logo.png" alt="StackLite Logo" width="100">
+      <img src="images/logo.png" alt="StackLite Logo" width="100">
+
     </a>
     <h1>StackLite</h1>
   </header>
@@ -17,41 +19,40 @@
   <!-- Navigation -->
   <nav>
     <ul>
-      <!-- يظهر فقط لغير المسجلين -->
       <li id="nav-login"><a href="login.html">Login</a></li>
       <li id="nav-register"><a href="register.html">Register</a></li>
-
-      <!-- يظهر فقط للمسجلين -->
       <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-profile" style="display:none;"><a href="myprofile.html">My Profile</a></li>
       <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
     </ul>
   </nav>
 
-  <!-- سؤال -->
+  <!-- تنبيهات أو رسالة -->
+  <div id="alert-box"></div>
+
+  <!-- عرض السؤال -->
   <h2 id="question-title">Loading question...</h2>
   <p id="question-meta"></p>
 
-  <!-- زر تعديل (يظهر لصاحب السؤال فقط) -->
+  <!-- تعديل العنوان -->
   <div id="edit-controls" style="display:none;">
     <textarea id="edit-title" rows="2" cols="50"></textarea><br>
     <button onclick="saveEdit()">Save</button>
   </div>
   <p id="edited-flag" style="display:none;">(edited)</p>
 
- 
 
-  <!-- إضافة إجابة -->
+  <!-- إضافة إجابة جديدة -->
   <h3>Add Your Answer</h3>
   <form id="answer-form">
     <label for="answer">Your Answer:</label><br>
     <textarea id="answer" rows="4" cols="50" required></textarea><br><br>
     <button type="submit">Post Answer</button>
   </form>
+  <!-- عرض الإجابات -->
+  <h3>Answers</h3>
+  <div id="answer-list"></div>
 
- <!-- الإجابات -->
- <h3>Answers</h3>
- <div id="answer-list"></div>
- 
   <!-- Scripts -->
   <script src="js/main.js"></script>
   <script src="js/question.js"></script>

@@ -1,40 +1,47 @@
-document.getElementById("ask-form").addEventListener("submit", function (e) {
-    e.preventDefault();
-  
-    var title = document.getElementById("title").value.trim();
-    var content = document.getElementById("content").value.trim();
-    var author = localStorage.getItem("loggedInUser");
-  
-    if (title === "" || content === "") {
-      alert("Please fill in all fields.");
-      return;
-    }
-  
-    if (!author) {
-      alert("You must be logged in.");
-      return;
-    }
-  
-    // قراءة الأسئلة القديمة (إذا موجودة)
-    var stored = localStorage.getItem("questions");
-    var questions = stored ? JSON.parse(stored) : [];
-  
-    // توليد ID تلقائي
-    var newId = questions.length > 0 ? questions[questions.length - 1].id + 1 : 1;
-  
-    var newQuestion = {
-      id: newId,
-      title: title,
-      content: content,
-      author: author,
-      date: new Date().toISOString().split("T")[0]
-    };
-  
-    // إضافة السؤال وتحديث التخزين
-    questions.push(newQuestion);
-    localStorage.setItem("questions", JSON.stringify(questions));
-  
-    alert("Question posted!");
-    window.location.href = "home.html";
+// إرسال سؤال جديد إلى قاعدة البيانات
+fetch("php/session_info.php", {
+  credentials: "include"
+})
+  .then(response => response.json())
+  .then(data => {
+    const currentUser = data.username;
+
+    document.getElementById("ask-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const title = document.getElementById("title").value.trim();
+      const content = document.getElementById("content").value.trim();
+
+      if (!title || !content) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (!currentUser) {
+        alert("You must be logged in.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("content", content);
+
+      fetch("php/add_question.php", {
+        method: "POST",
+        body: formData,
+        credentials: "include"
+      })
+        .then(response => response.json())
+        .then(result => {
+          if (result.success) {
+            alert("Question posted!");
+            window.location.href = "home.php";
+          } else {
+            alert(result.message || "Something went wrong.");
+          }
+        })
+        .catch(() => {
+          alert("Error while submitting question.");
+        });
+    });
   });
-  

@@ -1,245 +1,241 @@
-// جلب الأسئلة من localStorage
-var stored = localStorage.getItem("questions");
-var questions = stored ? JSON.parse(stored) : [];
+let currentUser = null;
+let questionId = null;
 
-// قراءة ID من الرابط
-var url = window.location.search;
-var id = null;
+fetch("php/session_info.php", {
+  credentials: "include"
+})
+  .then(res => res.json())
+  .then(data => {
+    currentUser = data.username;
+    loadQuestion();
+  });
 
-if (url.indexOf("id=") !== -1) {
-  var parts = url.split("id=");
-  id = parseInt(parts[1]);
-}
-
-// البحث عن السؤال
-var selectedQuestion = null;
-for (var i = 0; i < questions.length; i++) {
-  if (questions[i].id === id) {
-    selectedQuestion = questions[i];
-    break;
+  function loadQuestion() {
+    const urlParams = new URLSearchParams(window.location.search);
+    questionId = urlParams.get("id");
+  
+    if (!questionId) {
+      document.getElementById("question-title").textContent = "No question ID found.";
+      return;
+    }
+  
+    fetch("php/get_question.php?id=" + questionId, {
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.error || !data.question) {
+          document.getElementById("question-title").textContent = "Question not found.";
+          return;
+        }
+  
+        const q = data.question;
+        document.getElementById("question-title").textContent = q.title;
+        document.getElementById("question-meta").textContent =
+          "Asked by " + q.author + " on " + q.created_at.split(" ")[0];
+  
+        if (currentUser === q.author) {
+          const editButton = document.createElement("button");
+          editButton.textContent = "Edit Question Title";
+          editButton.onclick = () => editQuestionTitle(q.title);
+          document.getElementById("question-title").after(editButton);
+        }
+  
+        const list = document.getElementById("answer-list");
+        list.innerHTML = "";
+  
+        data.answers.forEach((a) => {
+          const div = document.createElement("div");
+  
+          const p = document.createElement("p");
+          p.textContent = `${a.author}: ${a.content}`;
+          if (a.edited) {
+            const edited = document.createElement("span");
+            edited.textContent = " (edited)";
+            p.appendChild(edited);
+          }
+          div.appendChild(p);
+  
+          const voteDisplay = document.createElement("p");
+          voteDisplay.id = `vote-${a.id}`;
+          voteDisplay.textContent = "👍 " + a.votes;
+          div.appendChild(voteDisplay);
+  
+          // ✅ عرض أزرار التصويت أو رسالة التصويت السابق
+          if (currentUser && a.author !== currentUser) {
+            if (!a.user_vote) {
+              const up = document.createElement("button");
+              up.textContent = "Upvote";
+              up.onclick = () => vote(a.id, "up");
+              div.appendChild(up);
+  
+              const down = document.createElement("button");
+              down.textContent = "Downvote";
+              down.onclick = () => vote(a.id, "down");
+              div.appendChild(down);
+            } else {
+              const voted = document.createElement("p");
+              voted.textContent = `You voted (${a.user_vote}) — change your vote:`;
+              div.appendChild(voted);
+              
+              // زر تعديل التصويت
+              const up = document.createElement("button");
+              up.textContent = "Upvote";
+              up.disabled = a.user_vote === "up"; // عطل الزر لو سبق وصوّت
+              up.onclick = () => vote(a.id, "up");
+              div.appendChild(up);
+              
+              const down = document.createElement("button");
+              down.textContent = "Downvote";
+              down.disabled = a.user_vote === "down";
+              down.onclick = () => vote(a.id, "down");
+              div.appendChild(down);
+              
+            }
+          }
+  
+          if (currentUser === a.author) {
+            const edit = document.createElement("button");
+            edit.textContent = "Edit";
+            edit.onclick = () => editAnswer(a.id, a.content);
+            div.appendChild(edit);
+  
+            const del = document.createElement("button");
+            del.textContent = "Delete";
+            del.onclick = () => deleteAnswer(a.id);
+            div.appendChild(del);
+          }
+  
+          list.appendChild(div);
+        });
+      });
   }
-}
-
-if (selectedQuestion !== null) {
-  document.getElementById("question-title").textContent = selectedQuestion.title;
-  document.getElementById("question-meta").textContent =
-    "Asked by " + selectedQuestion.author + " on " + selectedQuestion.date;
-} else {
-  document.getElementById("question-title").textContent = "Question not found.";
-}
-
-// جلب الإجابات
-var storedAnswers = localStorage.getItem("answers");
-var answers = storedAnswers ? JSON.parse(storedAnswers) : [];
-
-var answerList = document.getElementById("answer-list");
-var currentUser = localStorage.getItem("loggedInUser");
-
-// عرض الإجابات
-for (var j = 0; j < answers.length; j++) {
-  if (answers[j].questionId === id) {
-    var answerDiv = document.createElement("div");
-
-    var p = document.createElement("p");
-    p.textContent = answers[j].author + ": " + answers[j].content;
-    p.id = "answer-text-" + j;
-
-    if (answers[j].edited === true) {
-      var editedFlag = document.createElement("span");
-      editedFlag.textContent = " (edited)";
-      p.appendChild(editedFlag);
-    }
-
-    answerDiv.appendChild(p);
-
-    // التصويتات
-    var voteSpan = document.createElement("p");
-    voteSpan.textContent = " 👍 " + (answers[j].votes || 0);
-    answerDiv.appendChild(voteSpan);
-
-    // أزرار التصويت
-    if (currentUser && answers[j].author !== currentUser) {
-      var upBtn = document.createElement("button");
-      upBtn.textContent = "Upvote";
-      upBtn.setAttribute("data-index", j);
-      upBtn.onclick = function () {
-        var index = parseInt(this.getAttribute("data-index"));
-        upVote(index);
-      };
-      answerDiv.appendChild(upBtn);
-
-      var downBtn = document.createElement("button");
-      downBtn.textContent = "Downvote";
-      downBtn.setAttribute("data-index", j);
-      downBtn.onclick = function () {
-        var index = parseInt(this.getAttribute("data-index"));
-        downVote(index);
-      };
-      answerDiv.appendChild(downBtn);
-    }
-
-    // تعديل وحذف
-    if (answers[j].author === currentUser) {
-      var editBtn = document.createElement("button");
-      editBtn.textContent = "Edit";
-      editBtn.setAttribute("data-index", j);
-      editBtn.onclick = function () {
-        var index = this.getAttribute("data-index");
-        showEditAnswer(index);
-      };
-
-      var deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
-      deleteBtn.setAttribute("data-index", j);
-      deleteBtn.onclick = function () {
-        var index = this.getAttribute("data-index");
-        deleteAnswer(index);
-      };
-
-      answerDiv.appendChild(editBtn);
-      answerDiv.appendChild(deleteBtn);
-    }
-
-    answerList.appendChild(answerDiv);
-  }
-}
+  
+  
 
 // إرسال إجابة جديدة
-var form = document.getElementById("answer-form");
-
-form.addEventListener("submit", function (e) {
+document.getElementById("answer-form").addEventListener("submit", function (e) {
   e.preventDefault();
 
-  var answerText = document.getElementById("answer").value.trim();
-
-  if (answerText === "") {
+  const content = document.getElementById("answer").value.trim();
+  if (!content) {
     alert("Answer cannot be empty.");
     return;
   }
 
   if (!currentUser) {
-    alert("You must be logged in to post an answer.");
+    alert("You must be logged in to answer.");
     return;
   }
 
-  var newAnswer = {
-    questionId: id,
-    content: answerText,
-    author: currentUser,
-    votes: 0,
-    votedBy: []
-  };
+  const formData = new FormData();
+  formData.append("question_id", questionId);
+  formData.append("content", content);
 
-  answers.push(newAnswer);
-  localStorage.setItem("answers", JSON.stringify(answers));
-
-  location.reload();
+  fetch("php/add_answer.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || "Failed to post answer.");
+      }
+    });
 });
 
-// تعديل الإجابة
-function showEditAnswer(index) {
-  var current = answers[index];
+function vote(answerId, type) {
+  const formData = new FormData();
+  formData.append("answer_id", answerId);
+  formData.append("vote", type);
 
-  var newContent = prompt("Edit your answer:", current.content);
-  if (newContent !== null) {
-    newContent = newContent.trim();
-    if (newContent !== "") {
-      answers[index].content = newContent;
-      answers[index].edited = true;
-      localStorage.setItem("answers", JSON.stringify(answers));
-      location.reload();
+  fetch("php/vote_answer.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      document.querySelector(`#vote-${answerId}`).textContent = `👍 ${data.votes}`;
+    } else {
+      alert(data.message);
     }
+  })
+  .catch(err => {
+    alert("Error submitting vote");
+    console.error(err);
+  });
+}
+
+
+
+function editAnswer(answerId, oldContent) {
+  const newContent = prompt("Edit your answer:", oldContent);
+  if (newContent !== null && newContent.trim() !== "") {
+    const formData = new FormData();
+    formData.append("answer_id", answerId);
+    formData.append("content", newContent.trim());
+
+    fetch("php/edit_answer.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.message || "Failed to edit answer.");
+        }
+      });
   }
 }
 
-// حذف الإجابة
-function deleteAnswer(index) {
-  if (confirm("Are you sure you want to delete this answer?")) {
-    answers.splice(index, 1);
-    localStorage.setItem("answers", JSON.stringify(answers));
-    location.reload();
-  }
+function deleteAnswer(answerId) {
+  if (!confirm("Are you sure you want to delete this answer?")) return;
+
+  const formData = new FormData();
+  formData.append("answer_id", answerId);
+
+  fetch("php/delete_answer.php", {
+    method: "POST",
+    body: formData,
+    credentials: "include"
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        location.reload();
+      } else {
+        alert(data.message || "Failed to delete answer.");
+      }
+    });
 }
 
-// التصويت - Upvote
-function upVote(index) {
-  if (!currentUser) {
-    alert("You must be logged in to vote.");
-    return;
+function editQuestionTitle(oldTitle) {
+  const newTitle = prompt("Edit question title:", oldTitle);
+  if (newTitle && newTitle.trim() !== "") {
+    const formData = new FormData();
+    formData.append("question_id", questionId);
+    formData.append("title", newTitle.trim());
+
+    fetch("php/edit_question.php", {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          location.reload();
+        } else {
+          alert(data.message || "Failed to edit question.");
+        }
+      });
   }
-
-  if (!answers[index].votedBy) {
-    answers[index].votedBy = [];
-  }
-
-  if (answers[index].votedBy.includes(currentUser)) {
-    alert("You already voted on this answer.");
-    return;
-  }
-
-  answers[index].votes += 1;
-  answers[index].votedBy.push(currentUser);
-
-  localStorage.setItem("answers", JSON.stringify(answers));
-  location.reload();
-}
-
-// التصويت - Downvote (يسحب التصويت إذا سبق وصوّت)
-function downVote(index) {
-  if (!currentUser) {
-    alert("You must be logged in to vote.");
-    return;
-  }
-
-  if (!answers[index].votedBy || !answers[index].votedBy.includes(currentUser)) {
-    alert("You didn't vote on this answer.");
-    return;
-  }
-
-  answers[index].votes -= 1;
-
-  // نحذف المستخدم من votedBy
-  for (var i = 0; i < answers[index].votedBy.length; i++) {
-    if (answers[index].votedBy[i] === currentUser) {
-      answers[index].votedBy.splice(i, 1);
-      break;
-    }
-  }
-
-  localStorage.setItem("answers", JSON.stringify(answers));
-  location.reload();
-}
-
-// تعديل عنوان السؤال
-if (selectedQuestion !== null && currentUser === selectedQuestion.author) {
-  var editButton = document.createElement("button");
-  editButton.textContent = "Edit Question";
-  editButton.onclick = function () {
-    document.getElementById("edit-controls").style.display = "block";
-    document.getElementById("edit-title").value = selectedQuestion.title;
-  };
-  document.body.insertBefore(editButton, document.getElementById("answer-list"));
-}
-
-function saveEdit() {
-  var newTitle = document.getElementById("edit-title").value.trim();
-
-  if (newTitle === "") {
-    alert("Title cannot be empty.");
-    return;
-  }
-
-  document.getElementById("question-title").textContent = newTitle;
-  document.getElementById("edit-controls").style.display = "none";
-  document.getElementById("edited-flag").style.display = "inline";
-
-  for (var i = 0; i < questions.length; i++) {
-    if (questions[i].id === selectedQuestion.id) {
-      questions[i].title = newTitle;
-      break;
-    }
-  }
-
-  localStorage.setItem("questions", JSON.stringify(questions));
-  alert("Question updated.");
 }

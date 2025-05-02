@@ -1,3 +1,4 @@
+<?php session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +10,8 @@
 
   <!-- Logo + Title -->
   <header>
-    <a href="home.html">
+    <a href="home.php">
       <img src="images/logo.png" alt="StackLite Logo" width="100">
-
     </a>
     <h1>StackLite</h1>
   </header>
@@ -22,42 +22,36 @@
       <!-- For non-logged-in users -->
       <li id="nav-login"><a href="login.html">Login</a></li>
       <li id="nav-register"><a href="register.html">Register</a></li>
-  
+
       <!-- For logged-in users -->
-      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-ask" style="display:none;"><a href="ask_question.php">Ask Question</a></li>
       <li id="nav-profile" style="display:none;"><a href="myprofile.html">My Profile</a></li>
       <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
-      
     </ul>
   </nav>
 
+  <!-- Search -->
   <form id="search-form">
     <input type="text" id="search-input" placeholder="Search questions..." required>
     <button type="submit">Search</button>
   </form>
-  
 
   <!-- Main Content -->
   <h2>Recent Questions</h2>
-
   <div id="question-list">
     <!-- Questions will be added here dynamically -->
   </div>
 
-
-  <script >
-document.getElementById("search-form").addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  var keyword = document.getElementById("search-input").value.trim();
-
-  if (keyword !== "") {
-    var encoded = encodeURIComponent(keyword);
-    window.location.href = "search.html?q=" + encoded;
-  }
-});
+  <script>
+    document.getElementById("search-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var keyword = document.getElementById("search-input").value.trim();
+      if (keyword !== "") {
+        var encoded = encodeURIComponent(keyword);
+        window.location.href = "search.html?q=" + encoded;
+      }
+    });
   </script>
-
 
   <script src="js/main.js"></script>
   <script src="js/home.js"></script>

@@ -9,8 +9,8 @@
 
   <!-- Logo + Title -->
   <header>
-    <a href="home.html">
-      <img src="imges/logo.png" alt="StackLite Logo" width="100">
+    <a href="home.php">
+      <img src="images/logo.png" alt="StackLite Logo" width="100">
       
     </a>
     <h1>StackLite</h1>
@@ -19,7 +19,6 @@
   <!-- Navigation -->
   <nav>
     <ul>
-      <li><a href="home.html">Home</a></li>
       <li><a href="login.html">Login</a></li>
       <li><a href="register.html">Register</a></li>
       <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
@@ -30,7 +29,7 @@
   <!-- Login Form -->
   <h2>Login</h2>
 
-  <form id=login-form action="submit_login.php" method="post">
+  <form id=login-form action="php/login.php"" method="post">
     <label for="username">Username:</label><br>
     <input type="text" id="username" name="username" required><br><br>
 
@@ -39,7 +38,17 @@
 
     <button type="submit">Login</button>
   </form>
+  
+
+  <p id="error-message" style="color: red;"></p>
+  
   <script src="js/main.js"></script>
-  <script src="js/login.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "user") {
+      document.getElementById("error-message").textContent = "Username or password is incorrect.";
+    }
+  </script>
+  
 </body>
 </html>

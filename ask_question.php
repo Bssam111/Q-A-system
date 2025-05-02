@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,9 +12,8 @@
 
   <!-- Logo -->
   <header>
-    <a href="home.html">
+    <a href="home.php">
       <img src="images/logo.png" alt="StackLite Logo" width="100">
-
     </a>
   </header>
 
@@ -21,20 +23,18 @@
       <!-- For non-logged-in users -->
       <li id="nav-login"><a href="login.html">Login</a></li>
       <li id="nav-register"><a href="register.html">Register</a></li>
-  
+
       <!-- For logged-in users -->
-      <li id="nav-ask" style="display:none;"><a href="ask_question.html">Ask Question</a></li>
+      <li id="nav-ask" style="display:none;"><a href="ask_question.php">Ask Question</a></li>
       <li id="nav-logout" style="display:none;"><a href="#" onclick="logout()">Logout</a></li>
       <li id="nav-profile" style="display:none;"><a href="myprofile.html">My Profile</a></li>
-      
     </ul>
   </nav>
-  
 
   <!-- Ask Question Form -->
   <h1>Ask a New Question</h1>
 
-  <form id="ask-form"  method="post">
+  <form id="ask-form" method="post">
     <label for="title">Question Title:</label><br>
     <input type="text" id="title" name="title" required><br><br>
 
@@ -43,22 +43,8 @@
 
     <button type="submit">Post Question</button>
   </form>
-  
-  
 
-<!-- هذا الكود حماية فقط -->
-<script src="js/main.js"></script>
-  <script>
-    // التحقق من تسجيل الدخول
-    const user = localStorage.getItem("loggedInUser");
-  
-    if (!user) {
-      alert("You must be logged in to ask a question.");
-      window.location.href = "login.html";
-    }
-  </script> 
-  
-<script src="js/ask.js"></script>
-
+  <script src="js/main.js"></script>
+  <script src="js/ask.js"></script>
 </body>
 </html>

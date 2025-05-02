@@ -1,26 +1,34 @@
-// استرجاع الأسئلة من localStorage
-var stored = localStorage.getItem("questions");
-var questions = stored ? JSON.parse(stored) : [];
+// عرض الأسئلة من قاعدة البيانات في الصفحة الرئيسية
+fetch("php/get_questions.php")
+  .then(response => response.json())
+  .then(questions => {
+    var container = document.getElementById("question-list");
+    container.innerHTML = "";
 
-var container = document.getElementById("question-list");
+    if (questions.length === 0) {
+      container.textContent = "No questions yet.";
+      return;
+    }
 
-for (var i = 0; i < questions.length; i++) {
-  var q = questions[i];
+    for (var i = 0; i < questions.length; i++) {
+      var div = document.createElement("div");
 
-  var div = document.createElement("div");
+      var h3 = document.createElement("h3");
+      var link = document.createElement("a");
+      link.href = "question.html?id=" + questions[i].id;
+      link.textContent = questions[i].title;
 
-  var title = document.createElement("h3");
-  var link = document.createElement("a");
-  link.href = "question.html?id=" + q.id;
-  link.textContent = q.title;
+      h3.appendChild(link);
+      div.appendChild(h3);
 
-  title.appendChild(link);
+      var meta = document.createElement("p");
+      meta.textContent = "Asked by " + questions[i].author + " on " + questions[i].created_at.split(" ")[0];
+      div.appendChild(meta);
 
-  var meta = document.createElement("p");
-  meta.textContent = "Asked by " + q.author + " on " + q.date;
-
-  div.appendChild(title);
-  div.appendChild(meta);
-
-  container.appendChild(div);
-}
+      container.appendChild(div);
+    }
+  })
+  .catch(error => {
+    document.getElementById("question-list").textContent = "Failed to load questions.";
+    console.error("Fetch error:", error);
+  });

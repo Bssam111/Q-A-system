@@ -1,28 +1,24 @@
-var currentUser = localStorage.getItem("loggedInUser");
-document.getElementById("username-placeholder").textContent = currentUser;
+fetch("php/get_my_profile.php")
+  .then(res => res.json())
+  .then(data => {
+    if (data.error) {
+      document.body.innerHTML = "<p>You must be logged in.</p>";
+      return;
+    }
 
-// جلب الأسئلة
-var storedQuestions = localStorage.getItem("questions");
-var questions = storedQuestions ? JSON.parse(storedQuestions) : [];
+    document.getElementById("username-placeholder").textContent = data.username;
 
-var myQuestions = document.getElementById("my-questions");
-for (var i = 0; i < questions.length; i++) {
-  if (questions[i].author === currentUser) {
-    var q = document.createElement("p");
-    q.innerHTML = "<a href='question.html?id=" + questions[i].id + "'>" + questions[i].title + "</a>";
-    myQuestions.appendChild(q);
-  }
-}
+    const qContainer = document.getElementById("my-questions");
+    data.questions.forEach(q => {
+      const p = document.createElement("p");
+      p.innerHTML = `<a href='question.html?id=${q.id}'>${q.title}</a>`;
+      qContainer.appendChild(p);
+    });
 
-// جلب الإجابات
-var storedAnswers = localStorage.getItem("answers");
-var answers = storedAnswers ? JSON.parse(storedAnswers) : [];
-
-var myAnswers = document.getElementById("my-answers");
-for (var i = 0; i < answers.length; i++) {
-  if (answers[i].author === currentUser) {
-    var a = document.createElement("p");
-    a.innerHTML = "On question " + "<a href='question.html?id="+ answers[i].questionId + "'>"+ questions[i].title +"</a>"+": " + answers[i].content;
-    myAnswers.appendChild(a);
-  }
-}
+    const aContainer = document.getElementById("my-answers");
+    data.answers.forEach(a => {
+      const p = document.createElement("p");
+      p.innerHTML = `On question <a href='question.html?id=${a.question_id}'>${a.title}</a>: ${a.content}`;
+      aContainer.appendChild(p);
+    });
+  });

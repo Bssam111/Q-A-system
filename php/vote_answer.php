@@ -19,10 +19,8 @@ if (!in_array($voteType, ['up', 'down']) || $newVotes === -999) {
 }
 
 // check if user already voted on this answer
-$check = $conn->prepare("SELECT vote_type FROM answer_votes WHERE user_id = ? AND answer_id = ?");
-$check->bind_param("ii", $userId, $answerId);
-$check->execute();
-$result = $check->get_result();
+$check_sql = "SELECT vote_type FROM answer_votes WHERE user_id = $userId AND answer_id = $answerId";
+$result = $conn->query($check_sql);
 $row = $result->fetch_assoc();
 
 // user has voted before
@@ -33,9 +31,9 @@ if ($row) {
   }
 
   // allow changing vote from up to down or vice versa
-  $stmt = $conn->prepare("UPDATE answer_votes SET vote_type = ? WHERE user_id = ? AND answer_id = ?");
-  $stmt->bind_param("sii", $voteType, $userId, $answerId);
-  $stmt->execute();
+  $update_sql = "UPDATE answer_votes SET vote_type = '$voteType' WHERE user_id = $userId AND answer_id = $answerId";
+  $conn->query($update_sql);
+
 } else {
   // new voter: only allow upvote first
   if ($voteType === 'down') {
@@ -44,15 +42,13 @@ if ($row) {
   }
 
   // first time upvote
-  $stmt = $conn->prepare("INSERT INTO answer_votes (user_id, answer_id, vote_type) VALUES (?, ?, ?)");
-  $stmt->bind_param("iis", $userId, $answerId, $voteType);
-  $stmt->execute();
+  $insert_sql = "INSERT INTO answer_votes (user_id, answer_id, vote_type) VALUES ($userId, $answerId, '$voteType')";
+  $conn->query($insert_sql);
 }
 
 // update answer votes count
-$update = $conn->prepare("UPDATE answers SET votes = ? WHERE id = ?");
-$update->bind_param("ii", $newVotes, $answerId);
-$update->execute();
+$update_votes_sql = "UPDATE answers SET votes = $newVotes WHERE id = $answerId";
+$conn->query($update_votes_sql);
 
 echo json_encode(["success" => true, "votes" => $newVotes]);
 ?>

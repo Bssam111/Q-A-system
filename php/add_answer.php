@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
   exit;
 }
 
-$questionId = intval($_POST['question_id']);
+$questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
 $content = trim($_POST['content']);
 $userId = $_SESSION['user_id'];
 
@@ -17,9 +17,8 @@ if ($content === "") {
   exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO answers (question_id, user_id, content) VALUES (?, ?, ?)");
-$stmt->bind_param("iis", $questionId, $userId, $content);
-$stmt->execute();
+$sql = "INSERT INTO answers (question_id, user_id, content) VALUES ($questionId, $userId, '$content')";
+$conn->query($sql);
 
 echo json_encode(["success" => true]);
 ?>

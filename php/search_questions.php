@@ -11,11 +11,8 @@ if ($q === '') {
 }
 
 // البحث في عنوان السؤال
-$stmt = $conn->prepare("SELECT id, title FROM questions WHERE title LIKE CONCAT('%', ?, '%')");
-$stmt->bind_param("s", $q);
-$stmt->execute();
-
-$result = $stmt->get_result();
+$sql = "SELECT id, title FROM questions WHERE title LIKE '%$q%'";
+$result = $conn->query($sql);
 $questions = [];
 
 while ($row = $result->fetch_assoc()) {

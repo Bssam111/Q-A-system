@@ -8,15 +8,13 @@ if (!isset($_SESSION['user_id'])) {
   exit;
 }
 
-$questionId = intval($_POST['question_id']);
+$questionId = isset($_POST['question_id']) ? intval($_POST['question_id']) : 0;
 $newTitle = trim($_POST['title']);
 $userId = $_SESSION['user_id'];
 
 // تأكد أن المستخدم هو صاحب السؤال
-$check = $conn->prepare("SELECT id FROM questions WHERE id = ? AND user_id = ?");
-$check->bind_param("ii", $questionId, $userId);
-$check->execute();
-$result = $check->get_result();
+$check_sql = "SELECT id FROM questions WHERE id = $questionId AND user_id = $userId";
+$result = $conn->query($check_sql);
 
 if ($result->num_rows === 0) {
   echo json_encode(["success" => false, "message" => "Not allowed"]);
@@ -24,9 +22,8 @@ if ($result->num_rows === 0) {
 }
 
 // التحديث
-$update = $conn->prepare("UPDATE questions SET title = ? WHERE id = ?");
-$update->bind_param("si", $newTitle, $questionId);
-$update->execute();
+$update_sql = "UPDATE questions SET title = '$newTitle' WHERE id = $questionId";
+$conn->query($update_sql);
 
 echo json_encode(["success" => true]);
 ?>

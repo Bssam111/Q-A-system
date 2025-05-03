@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: 02 مايو 2025 الساعة 15:01
+-- Generation Time: 03 مايو 2025 الساعة 20:28
 -- إصدار الخادم: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,16 +38,6 @@ CREATE TABLE `answers` (
   `edited` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- إرجاع أو استيراد بيانات الجدول `answers`
---
-
-INSERT INTO `answers` (`id`, `question_id`, `content`, `author`, `votes`, `created_at`, `user_id`, `edited`) VALUES
-(4, 1, 'يبيب', '', 0, '2025-05-02 14:58:00', 5, 0),
-(5, 1, 'HELLO', '', 0, '2025-05-02 15:01:22', 1, 0),
-(6, 1, 'بلبل', '', 0, '2025-05-02 15:10:10', 5, 0),
-(8, 3, 'wewe', '', 0, '2025-05-02 15:37:57', 1, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -59,18 +49,6 @@ CREATE TABLE `answer_votes` (
   `answer_id` int(11) NOT NULL,
   `vote_type` enum('up','down') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- إرجاع أو استيراد بيانات الجدول `answer_votes`
---
-
-INSERT INTO `answer_votes` (`user_id`, `answer_id`, `vote_type`) VALUES
-(1, 4, 'up'),
-(1, 6, 'up'),
-(5, 5, 'up'),
-(6, 4, 'down'),
-(6, 5, 'down'),
-(6, 6, 'down');
 
 -- --------------------------------------------------------
 
@@ -86,14 +64,6 @@ CREATE TABLE `questions` (
   `user_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- إرجاع أو استيراد بيانات الجدول `questions`
---
-
-INSERT INTO `questions` (`id`, `title`, `content`, `created_at`, `user_id`) VALUES
-(1, 'كيف انام', 'يبيبي', '2025-05-02 14:05:31', 1),
-(3, 'hello', 'hi', '2025-05-02 15:37:15', 6);
-
 -- --------------------------------------------------------
 
 --
@@ -106,18 +76,6 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- إرجاع أو استيراد بيانات الجدول `users`
---
-
-INSERT INTO `users` (`id`, `username`, `email`, `password`) VALUES
-(1, 'BASSAM', 'bssambnsih19@gmail.com', '$2y$10$FC0dQOTt6lzr5hnUjII4q.yTO8fNiPvvHDHSXDdvufxSp8CX5p4ai'),
-(2, 'omar', 'bssambnsih19@gmail.com', '$2y$10$PfdHZUOllNymb/J4mT5NFenjns1jGNbWfVeLdMHjWoO0Z6akrgVoK'),
-(3, 'omar', 'bssambnsih19@gmail.com', '$2y$10$SYCBlFx8E/EhTUjEI9h0peSxNIyytbyivPZ9gHJIh62U9mbs9DcPm'),
-(4, 'BASSAM', 'bssambnsih1@gmail.com', '$2y$10$wdHayYiJDyqtsZzZFkBTyeNOp9xjqZcTAXwpcysP4f1CL1ADm3FqO'),
-(5, 'kahiled', 'khalid123@gmail.com', '$2y$10$ZGf71yhwdV1BXeFfli1REuQ6b/blkZEvpIvoz22ecZiNbSuOHku02'),
-(6, 'a', 'a@gmail.com', '$2y$10$FlhH.RvbxLh1FnEMwmscPeuJCjSGk8.GqZRk8C4Ln4yPJMpwpVklC');
 
 --
 -- Indexes for dumped tables
@@ -159,19 +117,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `answers`
 --
 ALTER TABLE `answers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `questions`
 --
 ALTER TABLE `questions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- قيود الجداول المُلقاة.

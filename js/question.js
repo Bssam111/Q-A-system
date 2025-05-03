@@ -32,6 +32,39 @@ function loadQuestion() {
 
       const q = data.question;
       document.getElementById("question-title").textContent = q.title;
+
+      if (currentUser === q.author) {
+        const questionId = q.id || new URLSearchParams(window.location.search).get("id");
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit Question";
+        editBtn.style.marginLeft = "10px";
+        editBtn.onclick = () => {
+          const newTitle = prompt("Edit your question title:", q.title);
+          if (newTitle && newTitle.trim() !== "") {
+            const fd = new FormData();
+            fd.append("question_id", questionId);
+            fd.append("title", newTitle.trim());
+            fetch("php/edit_question.php", {
+              method: "POST",
+              body: fd,
+              credentials: "include"
+            })
+            .then(res => res.json())
+            .then(data => {
+              if (data.success) {
+                location.reload();
+              } else {
+                alert(data.message || "Failed to edit question.");
+              }
+            });
+          }
+        };
+
+
+        const container = document.getElementById("question-title");
+        container.appendChild(editBtn);
+      }
       document.getElementById("question-meta").textContent =
         "Asked by " + q.author + " on " + q.created_at.split(" ")[0];
 

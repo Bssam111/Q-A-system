@@ -41,7 +41,16 @@
 
     <button type="submit">Create Account</button>
   </form>
+
+  <p id="error-message" style="color: red;"></p>
+
   <script src="js/main.js"></script>
-  
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "user") {
+      document.getElementById("error-message").textContent = "Username or Email is already registred.";
+    }
+  </script>
+
 </body>
 </html>

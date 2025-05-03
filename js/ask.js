@@ -27,8 +27,6 @@ fetch("php/session_info.php", {
       formData.append("content", content);
 
       fetch("php/add_question.php", {
-        method: "POST",
-        body: formData,
         credentials: "include"
       })
         .then(response => response.json())

@@ -1,36 +1,37 @@
-var url = window.location.search; 
-var keyword = "";
 
-if (url.indexOf("q=") !== -1) {
-  var parts = url.split("q=");
-  keyword = decodeURIComponent(parts[1]).toLowerCase();
-}
+const urlParams = new URLSearchParams(window.location.search);
+const keyword = urlParams.get("q") || "";
 
-var stored = localStorage.getItem("questions");
-var questions = stored ? JSON.parse(stored) : [];
+const container = document.getElementById("result-list");
 
-var container = document.getElementById("result-list");
-var found = false;
+if (!keyword) {
+  container.textContent = "Please enter a search keyword.";
+} else {
+  fetch("php/search_questions.php?q=" + encodeURIComponent(keyword), {
+    credentials: "include"
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success || !data.questions || data.questions.length === 0) {
+        container.textContent = "No questions found.";
+        return;
+      }
 
-for (var i = 0; i < questions.length; i++) {
-  var title = questions[i].title.toLowerCase();
+      data.questions.forEach(q => {
+        const div = document.createElement("div");
+        const h3 = document.createElement("h3");
+        const link = document.createElement("a");
 
-  if (title.indexOf(keyword) !== -1) {
-    var div = document.createElement("div");
-    var h3 = document.createElement("h3");
-    var link = document.createElement("a");
+        link.href = "question.html?id=" + q.id;
+        link.textContent = q.title;
 
-    link.href = "question.html?id=" + questions[i].id;
-    link.textContent = questions[i].title;
-
-    h3.appendChild(link);
-    div.appendChild(h3);
-    container.appendChild(div);
-
-    found = true;
-  }
-}
-
-if (!found) {
-  container.textContent = "No questions found.";
+        h3.appendChild(link);
+        div.appendChild(h3);
+        container.appendChild(div);
+      });
+    })
+    .catch(err => {
+      container.textContent = "Error while searching.";
+      console.error(err);
+    });
 }

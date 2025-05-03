@@ -8,15 +8,13 @@ if (!isset($_SESSION['user_id'])) {
   exit;
 }
 
-$answerId = intval($_POST['answer_id']);
+$answerId = isset($_POST['answer_id']) ? intval($_POST['answer_id']) : 0;
 $newContent = trim($_POST['content']);
 $userId = $_SESSION['user_id'];
 
 // تأكد أن المستخدم هو صاحب الإجابة
-$check = $conn->prepare("SELECT id FROM answers WHERE id = ? AND user_id = ?");
-$check->bind_param("ii", $answerId, $userId);
-$check->execute();
-$result = $check->get_result();
+$check_sql = "SELECT id FROM answers WHERE id = $answerId AND user_id = $userId";
+$result = $conn->query($check_sql);
 
 if ($result->num_rows === 0) {
   echo json_encode(["success" => false, "message" => "Not allowed"]);
@@ -24,9 +22,10 @@ if ($result->num_rows === 0) {
 }
 
 // التحديث
-$update = $conn->prepare("UPDATE answers SET content = ?, edited = 1 WHERE id = ?");
-$update->bind_param("si", $newContent, $answerId);
-$update->execute();
+$escapedContent = mysqli_real_escape_string($conn, $newContent);
+$update_sql = "UPDATE answers SET content = '$escapedContent', edited = 1 WHERE id = $answerId";
+$conn->query($update_sql);
 
 echo json_encode(["success" => true]);
 ?>
+

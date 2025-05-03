@@ -107,10 +107,6 @@ function loadQuestion() {
           edit.onclick = () => editAnswer(a.id, a.content);
           div.appendChild(edit);
 
-          const del = document.createElement("button");
-          del.textContent = "Delete";
-          del.onclick = () => deleteAnswer(a.id);
-          div.appendChild(del);
         }
 
         list.appendChild(div);
@@ -208,23 +204,3 @@ function editAnswer(answerId, oldContent) {
   }
 }
 
-function deleteAnswer(answerId) {
-  if (!confirm("Are you sure you want to delete this answer?")) return;
-
-  const formData = new FormData();
-  formData.append("answer_id", answerId);
-
-  fetch("php/delete_answer.php", {
-    method: "POST",
-    body: formData,
-    credentials: "include"
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        location.reload();
-      } else {
-        alert(data.message || "Failed to delete answer.");
-      }
-    });
-}

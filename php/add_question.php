@@ -17,9 +17,8 @@ if ($title === "" || $content === "") {
   exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO questions (user_id, title, content) VALUES (?, ?, ?)");
-$stmt->bind_param("iss", $userId, $title, $content);
-$stmt->execute();
+$sql = "INSERT INTO questions (user_id, title, content) VALUES ($userId, '$title', '$content')";
+$conn->query($sql);
 
 echo json_encode(["success" => true]);
 ?>

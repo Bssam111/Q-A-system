@@ -31,6 +31,6 @@ function logout() {
     method: "POST",
     credentials: "include"
   }).then(() => {
-    window.location.href = "home.php";
+    window.location.href = "home.html";
   });
 }

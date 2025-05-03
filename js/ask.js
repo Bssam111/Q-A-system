@@ -27,19 +27,21 @@ fetch("php/session_info.php", {
       formData.append("content", content);
 
       fetch("php/add_question.php", {
+        method: "POST",
+        body: formData,
         credentials: "include"
       })
         .then(response => response.json())
         .then(result => {
           if (result.success) {
             alert("Question posted!");
-            window.location.href = "home.php";
+            window.location.href = "home.html";
           } else {
             alert(result.message || "Something went wrong.");
           }
         })
-        .catch(() => {
-          alert("Error while submitting question.");
-        });
+        // .catch(() => {
+        //   alert("Error while submitting question.");
+        // });
     });
   });

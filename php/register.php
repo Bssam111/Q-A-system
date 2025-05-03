@@ -25,7 +25,7 @@
 
 // // تنفيذ الأمر
 // if ($conn->query($sql) === TRUE) {
-//     header("Location: ../home.php");
+//     header("Location: ../home.html");
 //     exit();
 // }
 // else {
@@ -50,6 +50,6 @@ if($result->num_rows > 0){
 
 $sql = "INSERT INTO users (username, email, password) VALUES ('$username', '$email', '$password')";
 $conn->query($sql);
-header("Location: ../home.php");
+header("Location: ../home.html");
 
 ?>

@@ -76,7 +76,8 @@ function loadQuestion() {
 
         const p = document.createElement("p");
         p.textContent = `${a.author}: ${a.content}`;
-        if (a.edited) {
+        if (a.edited == 1) {
+  
           const edited = document.createElement("span");
           edited.textContent = " (edited)";
           p.appendChild(edited);
